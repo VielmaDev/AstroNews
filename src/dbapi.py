@@ -15,50 +15,53 @@ api_key = "c2OYvrWfzSWPDRAburcCkTmIc0iKnAZk88xLwaVq"
 now= date.today() # Fecha actual tomada del servidor
 
 def apod(): # Conexión a la Api APOD
-
         try:
                 # Parámetros de busqueda
                 params= {
                       "api_key": api_key,
-                       "date": now,
+                       "date":'2010-07-01',
                     }
                 # Solicitud GET a la API
                 response = requests.get(URL_API_APOD, params= params) 
 
                 if response.status_code == 200:
                     apod_data = response.json()  # Se convierte la respuesta a JSON
+                
+                else:
+                    apod_data(f"Error al conectar con la API APOD") # Error de conexión con la api 
 
         except requests.exceptions.RequestException as e:
-            apod_data(f"Error al conectar con la API APOD: {e}") # Error de conexión con la api
+            apod_data("Error al conectar con la API APOD: {e}") # Error de conexión con la api
 
         except json.JSONDecodeError as e:
-            apod_data(ft.Text(f"Error al decodificar JSON: {e}"))  # Manejo de errores al decodificar JSON
+            apod_data(f"Error al decodificar JSON: {e}")  # Manejo de errores al decodificar JSON
         
         return apod_data # Retorno de data
 apod()
 
 
-def neows(): # Conexión a la Api NeoWs
-                
+def neows(): # Conexión a la Api NeoWs       
         try:
                 # Parámetros de busqueda
                 params= {
-                      "api_key": api_key,
-                         "date": now,
+                    "api_key": api_key,
+                    "start_date":"2010-09-07",
+                    "end_date": "2010-09-08",
                     }
                 # Intenta realizar la solicitud GET a la API
                 response = requests.get(URL_API_NEOWS, params= params)
 
                 if response.status_code == 200:
+                    neows_data = response.json() # Se convierte la respuesta a JSON
 
-                    # Se convierte la respuesta a JSON
-                    neows_data = response.json()
+                else:
+                    neows_data("Error al conectar con la API NeoWs") # Error de conexión con la api
 
         except requests.exceptions.RequestException as e:
             neows_data(f"Error al conectar con la API NeoWs: {e}") # Error de conexión con la api
 
         except json.JSONDecodeError as e:
-           neows_data(ft.Text(f"Error al decodificar JSON: {e}"))  # Maneja errores al decodificar JSON
+           neows_data(f"Error al decodificar JSON: {e}")  # Maneja errores al decodificar JSON
          
         return neows_data # Retorno de data
 neows()

@@ -1,12 +1,12 @@
 import flet as ft
-from flet import Page, TextField, ElevatedButton, Column, Row, Text, Container, alignment, Dropdown, dropdown, Colors, Image
+from flet import TextField, ElevatedButton, Column, Row, Text, Container, alignment, Dropdown, dropdown, Colors, Image, DataRow, DataCell, DataTable, DataColumn
 import dbapi
 from datetime import datetime
 from time import strftime
 
 # ---CONFIGURACIÓN DE FORMATOS ---
-ORIGINAL_API_FORMAT = "%Y-%m-%d" # Ejemplo de formato ISO, común en APIs
-API_DATE_FORMAT = "%d-%m-%Y" # Formato fecha a convertir.
+ORIGINAL_API_FORMAT = "%Y-%m-%d" #Formato ISO 
+API_DATE_FORMAT = "%d-%m-%Y" #Nuevo formato fecha a convertir.
 
 class myapp:
     def __init__(self, page: ft.Page):
@@ -45,7 +45,7 @@ class myapp:
         )
 
         # Widgets News         
-        label = ft.Text(f"{Apod['title']}", size=25, 
+        label = ft.Text(f"{Apod['title']}", size=25,
                          color=ft.Colors.BLUE,
                          text_align=ft.TextAlign.CENTER)
         apod_label = Row(
@@ -61,7 +61,6 @@ class myapp:
                         size=17,
                         color=ft.Colors.WHITE,
                         text_align=ft.TextAlign.CENTER)
-        
         apod_date = Row(
                         controls=[dates],
                         alignment="center", # Alineación horizontal
@@ -81,7 +80,8 @@ class myapp:
                     ]),
                 padding=20)
 
-        # widget Asteroids
+        # Widget Asteroids
+        #Etiqueta encabezado widget Asteroid
         label = ft.Text("Asteroides cercanos a la Tierra", size=23,
                             color=ft.Colors.BLUE, 
                             text_align=ft.TextAlign.CENTER)
@@ -89,45 +89,94 @@ class myapp:
                         controls=[label],
                         alignment="center", # Alineación horizontal
                     )
-
-        count = ft.Text("Cantidad de elementos: ", size=16,
+        #Contador de elementos widget Ateroid
+        count = ft.Text(f"Cantidad de objetos:  {Neows['element_count']}", size=16,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
-
         neows_count = Row(
                         controls=[count],
                         alignment="center", # Alineación horizontal
         )
-        
-        table= ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Id")),
-                ft.DataColumn(ft.Text("Name")),
-                ft.DataColumn(ft.Text("Magnitude")),
-                ft.DataColumn(ft.Text("Diameter")),
-                ft.DataColumn(ft.Text("Hazardous")),
-                ft.DataColumn(ft.Text("Approach date full")),
-                ft.DataColumn(ft.Text("Velocity")),
-                ft.DataColumn(ft.Text("Miss distance")),
-                ft.DataColumn(ft.Text("Orbiting body")),
 
-            ],
-            rows=[
-                ft.DataRow(
+        # Fecha clave de busqueda
+        #date_key = list(Neows['near_earth_objects'].keys())[0]
+            
+        # ---Definición de las Columnas de la DataTable ---
+        columns=[
+                DataColumn(ft.Text("Neo id"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Nombre"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Magnitud"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Diámetro Km-Max"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Velocidad"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Dist. Astronómica"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Orbita"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Fecha aproximación"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+                DataColumn(ft.Text("Peligro"), 
+                              heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
+        ]
+
+        #Generador de Filas (Rows) usando un bucle for
+        neows_table= []
+        
+        #--- El bucle for itera sobre cada diccionario 'Neows' ---
+        for date_key, neos_list in Neows['near_earth_objects'].items():
+            for neo_data in neos_list:
+                approach_data = neo_data['close_approach_data'][0]
+                   
+            # ---Definición de las Filas (Rows) de la DataTable ---
+                rows=[
+                    DataRow(
                     cells=[
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                        ft.DataCell(ft.Text("")),
-                    ],
-                ),
-                
-            ],
+
+                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['neo_reference_id']}")),
+                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['close_approach_data'][0]['relative_velocity']['kilometers_per_hour']}")),
+                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['is_potentially_hazardous_asteroid']}")),
+
+                    # El id de referncia
+                    DataCell(ft.Text(f"{neo_data['neo_reference_id']}")),
+                    # El nombre del asteroide
+                    DataCell(ft.Text(f"{neo_data['name']}")),
+                    # La magnitud absoluta
+                    DataCell(ft.Text(f"{neo_data['absolute_magnitude_h']}")),
+                    # E diámetro máximo
+                    DataCell(ft.Text(f"{neo_data['estimated_diameter']['kilometers']['estimated_diameter_max']}")),
+                    # La velocidad
+                    DataCell(ft.Text(f"{approach_data['relative_velocity']['kilometers_per_hour']}")),
+                    # La distancia astronómica
+                    DataCell(ft.Text(f"{approach_data['miss_distance']['astronomical']}")),
+                    # El cuerpo orbitante
+                    DataCell(ft.Text(f"{approach_data['orbiting_body']}")),
+                    # La fecha cerrada de aproximación
+                    DataCell(ft.Text(f"{approach_data['close_approach_date_full']}")),
+                    # Potencial peligro
+                    DataCell(ft.Text(f"{neo_data['is_potentially_hazardous_asteroid']}")),
+                ],
+            ),
+        ]
+                #Agrega la fila (Row) con sus celdas a la lista neows_table
+                neows_table.append(rows) # Revisar porque no guarda los datos
+
+        # Tabla de widget Asteroids
+        table= DataTable(
+            #--- Configuración DataTable ---
+            columns=columns, 
+            rows=neows_table,
+            width=1300,
+            border=ft.border.all(1, ft.Colors.BLUE_500),
+            border_radius=10,
+            vertical_lines=ft.border.BorderSide(2, ft.Colors.BLUE_500),
+            horizontal_lines=ft.border.BorderSide(2, ft.Colors.BLUE_500),
+            heading_text_style=ft.TextStyle(weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_500),
+            data_text_style=ft.TextStyle(color=ft.Colors.WHITE),
+            column_spacing=10,
         )
 
         neows_table= Row(
@@ -155,7 +204,7 @@ class myapp:
                                     neows_count,
                                     neows_table,
                             ],
-                    ),padding=20 
+                    ),padding=10 
                 )
 
         page.add(news_container)
@@ -163,3 +212,5 @@ class myapp:
 
 if __name__ == "__main__":
     ft.app(target = myapp)
+
+
