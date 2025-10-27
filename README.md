@@ -1,6 +1,6 @@
 <caption>
     <div class="container" style="text-aling:center";>
-        <h1>AstrosApp</h1>
+        <h1>AstroNews</h1>
     </div>
 </caption>
 
@@ -9,7 +9,7 @@
     <img src="https://github.com/user-attachments/assets/36a3ffb3-8320-43b8-b2f8-b1cdbba06b78">
 </div>   
 <div class="container">
-    <p>AstrosApp es una aplicación que proporcionará noticias publicadas por la agencia espacial NASA e información de asteróides cercanos a la Tierra, toda esta 
+    <p>AstroNews es una aplicación que proporcionará noticias publicadas por la agencia espacial NASA e información de asteróides cercanos a la Tierra, toda esta 
         información será extraída de sus APIs (APOD y NeoWs) respectivamente.</p>
 </div>
 
