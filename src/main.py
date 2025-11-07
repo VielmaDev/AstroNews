@@ -10,7 +10,7 @@ API_DATE_FORMAT = "%d-%m-%Y" #Nuevo formato fecha a convertir.
 
 #---Conexión con módulo dbapi--- 
 Apod= dbapi.apod()
-Neows= dbapi.neows() 
+Neows= dbapi.neows()
 
 class myapp:
     def __init__(self, page: ft.Page):
@@ -27,29 +27,29 @@ class myapp:
             #--asumiendo que el PopupMenuButton es el último action del AppBar
             menu_items = page.appbar.actions[-1].items
             
-            #---Los items de contenido son el índice 2 ("News") y el 3 ("NeoWs Asteroids")
-            news_item = menu_items[2]
-            asteroids_item = menu_items[3]
+            #---Los items de contenido son el índice 2 ("News") y el 3 ("NeoWs")
+            apod_item = menu_items[2]
+            neows_item = menu_items[3]
 
             #---Alternar las propiedades checked y disabled
             item_click.checked = True
             item_click.disabled = True
 
-            if item_click.text == "News":
-                #---Si se hizo clic en "News", desmarcamos y habilitamos "NeoWs Asteroids"
-                asteroids_item.checked = False
-                asteroids_item.disabled = False
+            if item_click.text == "APOD":
+                #---Si se hizo clic en "News", desmarcamos y habilitamos "NeoWs"
+                neows_item.checked = False
+                neows_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
-                page.appbar.title = ft.Text("News")
+                page.appbar.title = ft.Text("APOD")
                 page.appbar.leading = ft.Icon(ft.Icons.NEWSPAPER)
                 page.remove(asteroid_container)
                 page.add(news_container)
                 
             elif item_click.text == "NeoWs":
                 #---Si se hizo clic en "NeoWs", desmarcamos y habilitamos "News"
-                news_item.checked = False
-                news_item.disabled = False
+                apod_item.checked = False
+                apod_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
                 page.appbar.title = ft.Text("NeoWs")
@@ -63,7 +63,7 @@ class myapp:
         page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.NEWSPAPER),
         leading_width=35,
-        title=ft.Text("News"),
+        title=ft.Text("APOD"),
         center_title=False,
         bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
@@ -73,7 +73,7 @@ class myapp:
                 items=[
                     ft.PopupMenuItem(text="Menú"),
                     ft.PopupMenuItem(), # divider
-                    ft.PopupMenuItem(text="News", 
+                    ft.PopupMenuItem(text="APOD", 
                                      checked=False,
                                      disabled=True,
                                      on_click=check_item_clicked,
@@ -137,7 +137,7 @@ class myapp:
                     padding=20)
         else: #---Si la conexión con la API APOD es fallida---
             #---Aviso de conexión fallida---
-            label = ft.Text(f"Error de conexión con la red", 
+            label = ft.Text(f'Error: conexión fallida con el servidor', 
                             size=40,
                             color=ft.Colors.RED,
                             text_align=ft.TextAlign.CENTER)
@@ -149,7 +149,7 @@ class myapp:
         #---Resultados de conexón con la API's---
         if Neows: #---Si la conexión con la API NeoWs es éxitosa---
             #---Título de la publicación---
-            label = ft.Text("Asteroides cercanos a la Tierra", 
+            label = ft.Text("Near Earth Object Web Service", 
                             size=23,
                             color=ft.Colors.BLUE, 
                             text_align=ft.TextAlign.CENTER)
@@ -158,7 +158,8 @@ class myapp:
                         alignment="center",
                     )
             #---Contador de elementos widget Ateroid---
-            count = ft.Text(f"Cantidad de objetos:  {Neows['element_count']}", size=16,
+            count = ft.Text(f"Element count:  {Neows['element_count']}",
+                            size=16,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
             neows_count = Row(
@@ -166,28 +167,38 @@ class myapp:
                         alignment="center", #---Alineación horizontal---
             )
 
-            #---Fecha clave de busqueda---
-            #date_key = list(Neows['near_earth_objects'].keys())[0]
+            #---Fecha de la publicación---
+            start_date = list(Neows['near_earth_objects'].keys())[0] # Fecha de inicio de la busqueda
+            end_date= list(Neows['near_earth_objects'].keys())[1] # Fecha final de la busqueda
+
+            dates = ft.Text(f"Start date: " + str(start_date) + " / End date: " + str(end_date),
+                            size=16,
+                            color=ft.Colors.YELLOW,
+                            text_align=ft.TextAlign.CENTER)
+            neows_date = Row(
+                            controls=[dates],
+                            alignment="center",
+                        )
             
             # ---Definición de las Columnas de la DataTable ---
             columns=[
                 DataColumn(ft.Text("Neo id"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Nombre"), 
+                DataColumn(ft.Text("Name"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Magnitud"), 
+                DataColumn(ft.Text("Magnitude"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Diámetro Km-Max"), 
+                DataColumn(ft.Text("Diameter Km"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Velocidad"), 
+                DataColumn(ft.Text("Velocity (Km/Hrs)"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Dist. Astronómica"), 
+                DataColumn(ft.Text("Distance / Astronomical"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Orbita"), 
+                DataColumn(ft.Text("Orby"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Fecha aproximación"), 
+                DataColumn(ft.Text("Closet date full"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-                DataColumn(ft.Text("Peligro"), 
+                DataColumn(ft.Text("Hazardous"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
         ]
 
@@ -201,42 +212,38 @@ class myapp:
                    
                 # ---Definición de las Filas (Rows) de la DataTable ---
                     rows=[
-                    DataRow(
-                    cells=[
+                        DataRow(
+                            cells=[
+                                # El id de referncia
+                                DataCell(ft.Text(f"{neo_data['neo_reference_id']}")),
+                                # El nombre del asteroide
+                                DataCell(ft.Text(f"{neo_data['name']}")),
+                                # La magnitud absoluta
+                                DataCell(ft.Text(f"{neo_data['absolute_magnitude_h']}")),
+                                # E diámetro máximo
+                                DataCell(ft.Text(f"{neo_data['estimated_diameter']['kilometers']['estimated_diameter_max']}")),
+                                # La velocidad
+                                DataCell(ft.Text(f"{approach_data['relative_velocity']['kilometers_per_hour']}")),
+                                # La distancia astronómica
+                                DataCell(ft.Text(f"{approach_data['miss_distance']['astronomical']}")),
+                                # El cuerpo orbitante
+                                DataCell(ft.Text(f"{approach_data['orbiting_body']}")),
+                                # La fecha cerrada de aproximación
+                                DataCell(ft.Text(f"{approach_data['close_approach_date_full']}")),
+                                # Potencial peligro
+                                DataCell(ft.Text(f"{neo_data['is_potentially_hazardous_asteroid']}")),
+                            ],
+                        ),
+                    ]
 
-                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['neo_reference_id']}")),
-                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['close_approach_data'][0]['relative_velocity']['kilometers_per_hour']}")),
-                    #ft.DataCell(ft.Text(f"{Neows['near_earth_objects'][date_key][0]['is_potentially_hazardous_asteroid']}")),
-
-                    # El id de referncia
-                    DataCell(ft.Text(f"{neo_data['neo_reference_id']}")),
-                    # El nombre del asteroide
-                    DataCell(ft.Text(f"{neo_data['name']}")),
-                    # La magnitud absoluta
-                    DataCell(ft.Text(f"{neo_data['absolute_magnitude_h']}")),
-                    # E diámetro máximo
-                    DataCell(ft.Text(f"{neo_data['estimated_diameter']['kilometers']['estimated_diameter_max']}")),
-                    # La velocidad
-                    DataCell(ft.Text(f"{approach_data['relative_velocity']['kilometers_per_hour']}")),
-                    # La distancia astronómica
-                    DataCell(ft.Text(f"{approach_data['miss_distance']['astronomical']}")),
-                    # El cuerpo orbitante
-                    DataCell(ft.Text(f"{approach_data['orbiting_body']}")),
-                    # La fecha cerrada de aproximación
-                    DataCell(ft.Text(f"{approach_data['close_approach_date_full']}")),
-                    # Potencial peligro
-                    DataCell(ft.Text(f"{neo_data['is_potentially_hazardous_asteroid']}")),
-                ],
-            ),
-        ]
-                    #Agrega la fila (Row) con sus celdas a la lista neows_table
-                    neows_table.append(rows) # Revisar porque no guarda los datos
+                #Agrega la fila (Row) con sus celdas a la lista neows_table
+                neows_table.append(rows) # Revisar porque no guarda los datos
 
             #---Tabla de widget Asteroids---
             table= DataTable(
                 #--- Configuración DataTable ---
                 columns=columns, 
-                rows=neows_table,
+                rows=rows,
                 width=1300,
                 border=ft.border.all(1, ft.Colors.BLUE_500),
                 border_radius=10,
@@ -254,7 +261,7 @@ class myapp:
 
         else: #---Si la conexión con la API NeoWs es fallida
             #---Aviso de conexión fallida--- 
-            label = ft.Text("Error de conexión con la red", 
+            label = ft.Text(f'Error: conexión fallida con el servidor', 
                             size=40,
                             color=ft.Colors.RED, 
                             text_align=ft.TextAlign.CENTER)
@@ -293,6 +300,7 @@ class myapp:
                                 controls=[
                                     neows_label,
                                     neows_count,
+                                    neows_date,
                                     neows_table,
                             ],
                     ),padding=10 
