@@ -10,7 +10,7 @@
 </div>   
 <div class="container">
     <p>AstroNews es una aplicación que proporcionará noticias publicadas por la agencia espacial NASA e información de asteróides cercanos a la Tierra, toda esta 
-        información será extraída de sus APIs (APOD y NeoWs) respectivamente.</p>
+        información será extraída de sus APIs (APOD y Asteroid NeoWs) respectivamente.</p>
 </div>
 
 <div class="container">
