@@ -67,7 +67,6 @@ class myapp:
         center_title=False,
         bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
-            ft.IconButton(ft.Icons.DEVICES),
             ft.IconButton(ft.Icons.CALENDAR_MONTH),
             ft.PopupMenuButton(
                 items=[
@@ -158,7 +157,7 @@ class myapp:
                         alignment="center",
                     )
             #---Contador de elementos widget Ateroid---
-            count = ft.Text(f"Element count:  {Neows['element_count']}",
+            count = ft.Text(f"Elements: {Neows['element_count']}",
                             size=16,
                             color=ft.Colors.WHITE,
                             text_align=ft.TextAlign.CENTER)
@@ -200,50 +199,47 @@ class myapp:
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
                 DataColumn(ft.Text("Hazardous"), 
                               heading_row_alignment=ft.MainAxisAlignment.CENTER), #Centra las celdas de datos
-        ]
-
-            #---Generador de Filas (Rows) usando un bucle for---
-            neows_table= []
-        
+            ]
+            
+            # Lista para acumular todas las DataRow generadas.
+            all_rows= [] 
+            
             #---El bucle for itera sobre cada diccionario 'Neows'---
-            for date_key, neos_list in Neows['near_earth_objects'].items():
+            for neos_list in Neows['near_earth_objects'].values():
                 for neo_data in neos_list:
-                    approach_data = neo_data['close_approach_data'][0]
-                   
-                # ---Definición de las Filas (Rows) de la DataTable ---
-                    rows=[
-                        DataRow(
-                            cells=[
-                                # El id de referncia
-                                DataCell(ft.Text(f"{neo_data['neo_reference_id']}")),
-                                # El nombre del asteroide
-                                DataCell(ft.Text(f"{neo_data['name']}")),
-                                # La magnitud absoluta
-                                DataCell(ft.Text(f"{neo_data['absolute_magnitude_h']}")),
-                                # E diámetro máximo
-                                DataCell(ft.Text(f"{neo_data['estimated_diameter']['kilometers']['estimated_diameter_max']}")),
-                                # La velocidad
-                                DataCell(ft.Text(f"{approach_data['relative_velocity']['kilometers_per_hour']}")),
-                                # La distancia astronómica
-                                DataCell(ft.Text(f"{approach_data['miss_distance']['astronomical']}")),
-                                # El cuerpo orbitante
-                                DataCell(ft.Text(f"{approach_data['orbiting_body']}")),
-                                # La fecha cerrada de aproximación
-                                DataCell(ft.Text(f"{approach_data['close_approach_date_full']}")),
-                                # Potencial peligro
-                                DataCell(ft.Text(f"{neo_data['is_potentially_hazardous_asteroid']}")),
-                            ],
-                        ),
-                    ]
+                        for approach_data in neo_data['close_approach_data']:
 
-                #Agrega la fila (Row) con sus celdas a la lista neows_table
-                neows_table.append(rows) # Revisar porque no guarda los datos
+                        # ---Definición de las Filas (Rows) de la DataTable ---
+                            rows=DataRow(
+                                        cells=[
+                                                # El id de referncia
+                                                DataCell(ft.Text(f"{neo_data['neo_reference_id']}")),
+                                                # El nombre del asteroide
+                                                DataCell(ft.Text(f"{neo_data['name']}")),
+                                                # La magnitud absoluta
+                                                DataCell(ft.Text(f"{neo_data['absolute_magnitude_h']}")),
+                                                # E diámetro máximo
+                                                DataCell(ft.Text(f"{neo_data['estimated_diameter']['kilometers']['estimated_diameter_max']}")),
+                                                # La velocidad
+                                                DataCell(ft.Text(f"{approach_data['relative_velocity']['kilometers_per_hour']}")),
+                                                # La distancia astronómica
+                                                DataCell(ft.Text(f"{approach_data['miss_distance']['astronomical']}")),
+                                                # El cuerpo orbitante
+                                                DataCell(ft.Text(f"{approach_data['orbiting_body']}")),
+                                                # La fecha cerrada de aproximación
+                                                DataCell(ft.Text(f"{approach_data['close_approach_date_full']}")),
+                                                # Potencial peligro
+                                                DataCell(ft.Text(f"{neo_data['is_potentially_hazardous_asteroid']}")),
+                                            ],
+                                        )
+                            # --- Añade la nueva fila a la lista de todas las filas ---      
+                            all_rows.append(rows) 
 
-            #---Tabla de widget Asteroids---
+            #---Tabla de widget Asteroids NeoWs---
             table= DataTable(
                 #--- Configuración DataTable ---
                 columns=columns, 
-                rows=rows,
+                rows=all_rows,
                 width=1300,
                 border=ft.border.all(1, ft.Colors.BLUE_500),
                 border_radius=10,
@@ -253,15 +249,13 @@ class myapp:
                 data_text_style=ft.TextStyle(color=ft.Colors.WHITE),
                 column_spacing=10,
             )
-
             neows_table= Row(
                         controls=[table],
                         alignment="center", #---Alineación horizontal---
                     )
 
         else: #---Si la conexión con la API NeoWs es fallida
-            #---Aviso de conexión fallida--- 
-            label = ft.Text(f'Error: conexión fallida con el servidor', 
+            label = ft.Text(f'Error: conexión fallida con el servidor', #---Aviso de conexión fallida--- 
                             size=40,
                             color=ft.Colors.RED, 
                             text_align=ft.TextAlign.CENTER)
@@ -270,9 +264,8 @@ class myapp:
                         alignment="center", #---Alineación horizontal---
                     )
 
-        #---Contenedor widgets news---
+        #---Contenedor widgets apod---
         if Apod: #---Si la conexión es éxitosa---
-            #---Contenedor de widgets News--- 
             news_container = Container(
                     content=ft.Column(
                         controls=[
@@ -284,7 +277,6 @@ class myapp:
                     ),padding=20 
                 )  
         else: #---Si la conexión es fallida---
-            #---Contenedor de widgets News---
             news_container = Container(
                         content=ft.Column(
                             controls=[
@@ -314,7 +306,6 @@ class myapp:
                     ),padding=250 
                 )
 
-        
         page.add(news_container)
         page.update()
 
