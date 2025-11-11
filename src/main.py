@@ -27,33 +27,33 @@ class myapp:
             #--asumiendo que el PopupMenuButton es el último action del AppBar
             menu_items = page.appbar.actions[-1].items
             
-            #---Los items de contenido son el índice 2 ("News") y el 3 ("NeoWs")
-            apod_item = menu_items[2]
-            neows_item = menu_items[3]
+            #---Los items de contenido son el índice 0 ("APOD") y el 2 ("Asteroids NeoWs")
+            apod_item = menu_items[0]
+            neows_item = menu_items[2]
 
             #---Alternar las propiedades checked y disabled
             item_click.checked = True
             item_click.disabled = True
 
             if item_click.text == "APOD":
-                #---Si se hizo clic en "News", desmarcamos y habilitamos "NeoWs"
+                #---Si se hizo clic en "APOD", desmarcamos y deshabilitamos "Asteroids NeoWs"
                 neows_item.checked = False
                 neows_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
-                page.appbar.title = ft.Text("APOD")
+                page.appbar.title = ft.Text("APOD: Astronomy Picture of the Day")
                 page.appbar.leading = ft.Icon(ft.Icons.NEWSPAPER)
                 page.remove(asteroid_container)
                 page.add(news_container)
                 
-            elif item_click.text == "NeoWs":
-                #---Si se hizo clic en "NeoWs", desmarcamos y habilitamos "News"
+            elif item_click.text == "Asteroids NeoWs":
+                #---Si se hizo clic en "Asteroids NeoWs", desmarcamos y deshabilitamos "APOD"
                 apod_item.checked = False
                 apod_item.disabled = False
                 
                 #---Actualizar el AppBar y el contenido de la página
-                page.appbar.title = ft.Text("NeoWs")
-                page.appbar.leading = ft.Icon(ft.Icons.SEARCH) #---Cambiamos el icono para el ejemplo
+                page.appbar.title = ft.Text("Asteroids NeoWs")
+                page.appbar.leading = ft.Icon(ft.Icons.EXPLORE) #---Cambiamos el icono para el ejemplo
                 page.remove(news_container)
                 page.add(asteroid_container)
             
@@ -63,21 +63,20 @@ class myapp:
         page.appbar = ft.AppBar(
         leading=ft.Icon(ft.Icons.NEWSPAPER),
         leading_width=35,
-        title=ft.Text("APOD"),
+        title=ft.Text("APOD: Astronomy Picture of the Day"),
         center_title=False,
         bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
         actions=[
             ft.IconButton(ft.Icons.CALENDAR_MONTH),
             ft.PopupMenuButton(
                 items=[
-                    ft.PopupMenuItem(text="Menú"),
-                    ft.PopupMenuItem(), # divider
                     ft.PopupMenuItem(text="APOD", 
                                      checked=False,
                                      disabled=True,
                                      on_click=check_item_clicked,
                     ),
-                    ft.PopupMenuItem(text="NeoWs", 
+                    ft.PopupMenuItem(), # divider
+                    ft.PopupMenuItem(text="Asteroids NeoWs", 
                                      checked=False,
                                      disabled=False,
                                     on_click=check_item_clicked,
@@ -170,7 +169,7 @@ class myapp:
             start_date = list(Neows['near_earth_objects'].keys())[0] # Fecha de inicio de la busqueda
             end_date= list(Neows['near_earth_objects'].keys())[1] # Fecha final de la busqueda
 
-            dates = ft.Text(f"Start date: " + str(start_date) + " / End date: " + str(end_date),
+            dates = ft.Text(f"From: " + str(start_date) + " / To: " + str(end_date),
                             size=16,
                             color=ft.Colors.YELLOW,
                             text_align=ft.TextAlign.CENTER)
